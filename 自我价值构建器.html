@@ -1,0 +1,309 @@
+<!DOCTYPE html> <!-- 声明文档类型为HTML5 -->
+<html lang="zh"> <!-- HTML文档开始，设置语言为中文 -->
+<head> <!-- 头部区域，包含页面的元信息和资源引用 -->
+    <meta charset="UTF-8"> <!-- 设置字符编码为UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置移动设备的视口 -->
+    <title>自我价值构建器</title> <!-- 设置页面标题 -->
+    <!-- 引入Bootstrap CSS框架 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan_Zheng&family=Noto+Serif+SC&display=swap" rel="stylesheet">
+    <style> <!-- CSS样式定义开始 -->
+        body { /* 设置页面整体样式 */
+            font-family: 'Noto Serif SC', serif; /* 设置字体 */
+            background-color: #fff5e6; /* 设置背景色 */
+            color: #5d4037; /* 设置文字颜色 */
+        }
+        .container { /* 容器样式 */
+            background-color: #fff9f0;
+            border-radius: 15px; /* 圆角边框 */
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); /* 阴影效果 */
+            padding: 30px;
+            margin-top: 50px;
+        }
+        h1 { /* 标题样式 */
+            font-family: 'Ma Shan Zheng', cursive;
+            color: #ff7043;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .card { /* 卡片样式 */
+            background-color: #ffffff;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease; /* 过渡动画效果 */
+        }
+        .card:hover { /* 卡片悬停效果 */
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        .card-body { /* 卡片内容区域样式 */
+            padding: 25px;
+        }
+        .btn-primary { /* 主要按钮样式 */
+            background-color: #ff7043;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover { /* 按钮悬停效果 */
+            background-color: #f4511e;
+            transform: scale(1.05);
+        }
+        #recent-records { /* 最近记录区域样式 */
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .modal-content { /* 模态框内容样式 */
+            background-color: #fff9f0;
+            border-radius: 15px;
+        }
+        .modal-header { /* 模态框头部样式 */
+            border-bottom: none;
+        }
+        .modal-footer { /* 模态框底部样式 */
+            border-top: none;
+        }
+        .form-control { /* 表单控件样式 */
+            background-color: #ffffff;
+            border: 1px solid #ffd8a8;
+            border-radius: 10px;
+        }
+        .form-control:focus { /* 表单控件焦点样式 */
+            border-color: #ff7043;
+            box-shadow: 0 0 0 0.2rem rgba(255,112,67,0.25);
+        }
+        .dedication { /* 献词样式 */
+            font-family: 'Ma Shan Zheng', cursive;
+            color: #ff7043;
+            text-align: center;
+            margin-top: 40px;
+            font-size: 24px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<script> <!-- JavaScript代码开始 -->
+    // 定义鼓励语数组
+    const encouragements = [
+        " 你对自己的爱，值得被看见！",
+        "你正在成为你自己！",
+        "你的价值无需任何外物来锚定！",
+        "你细心地照顾着自己的每一个需要，你真的很棒！",
+        "你做到了许多人都做不到的事——照顾好自己的健康！",
+        "你认真地对待着自己，你真得很棒！",
+        "你对自己的无条件爱与接纳，令人感动！",
+        "你如此温柔地照顾着自己，你真的很棒！",
+        "无意义的世界上，你的存在即是意义。",
+        "你生而拥有整个世界的爱与值得。"
+    ];
+
+    let currentCheckInType = ''; // 当前打卡类型
+
+    // 初始化数据函数
+    function initializeData() {
+        // 检查并初始化本地存储数据
+        if (!localStorage.getItem('checkInData')) {
+            localStorage.setItem('checkInData', JSON.stringify({
+                diet: [],
+                sleep: [],
+                mood: []
+            }));
+        }
+        if (!localStorage.getItem('recordData')) {
+            localStorage.setItem('recordData', JSON.stringify({}));
+        }
+        updateDisplay(); // 更新显示
+    }
+
+    // 打卡功能函数
+    function checkIn(type) {
+        currentCheckInType = type;
+        const data = JSON.parse(localStorage.getItem('checkInData'));
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (!data[type].includes(today)) {
+            data[type].push(today);
+            localStorage.setItem('checkInData', JSON.stringify(data));
+            
+            const encouragement = encouragements[Math.floor(Math.random() * encouragements.length)];
+            alert(encouragement);
+            
+            // 显示记录弹窗
+            const modal = new bootstrap.Modal(document.getElementById('recordModal'));
+            modal.show();
+        } else {
+            alert('今天已经打过卡啦！');
+        }
+    }
+
+    // 保存记录函数
+    function saveRecord() {
+        const recordContent = document.getElementById('recordContent').value;
+        const today = new Date().toISOString().split('T')[0];
+        const recordData = JSON.parse(localStorage.getItem('recordData'));
+        
+        if (!recordData[today]) {
+            recordData[today] = {};
+        }
+        recordData[today][currentCheckInType] = recordContent;
+        
+        localStorage.setItem('recordData', JSON.stringify(recordData));
+        
+        // 关闭弹窗
+        const modal = bootstrap.Modal.getInstance(document.getElementById('recordModal'));
+        modal.hide();
+        
+        // 清空输入框
+        document.getElementById('recordContent').value = '';
+        
+        updateDisplay();
+    }
+
+    // 更新显示函数
+    function updateDisplay() {
+        const data = JSON.parse(localStorage.getItem('checkInData'));
+        const recordData = JSON.parse(localStorage.getItem('recordData'));
+        const today = new Date().toISOString().split('T')[0];
+        
+        // 更新连续打卡次数
+        ['diet', 'sleep', 'mood'].forEach(type => {
+            const streak = calculateStreak(data[type]);
+            document.getElementById(`${type}-streak`).textContent = streak;
+        });
+        
+        // 更新最近记录
+        updateRecentRecords(data, recordData);
+    }
+
+    // 计算连续打卡天数函数
+    function calculateStreak(dates) {
+        if (!dates.length) return 0;
+        
+        dates.sort((a, b) => new Date(b) - new Date(a));
+        const today = new Date().toISOString().split('T')[0];
+        let streak = 0;
+        let currentDate = new Date(today);
+        
+        for (let date of dates) {
+            if (date === currentDate.toISOString().split('T')[0]) {
+                streak++;
+                currentDate.setDate(currentDate.getDate() - 1);
+            } else {
+                break;
+            }
+        }
+        
+        return streak;
+    }
+
+    // 更新最近记录函数
+    function updateRecentRecords(data, recordData) {
+        const recentRecords = document.getElementById('recent-records');
+        recentRecords.innerHTML = '';
+        
+        const allDates = new Set();
+        ['diet', 'sleep', 'mood'].forEach(type => {
+            data[type].forEach(date => allDates.add(date));
+        });
+        
+        const sortedDates = Array.from(allDates).sort((a, b) => new Date(b) - new Date(a)).slice(0, 5);
+        
+        sortedDates.forEach(date => {
+            const records = [];
+            if (data.diet.includes(date)) records.push('饮食');
+            if (data.sleep.includes(date)) records.push('运动与作息');
+            if (data.mood.includes(date)) records.push('情绪');
+            
+            const item = document.createElement('div');
+            item.className = 'card mb-3';
+            item.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">${date}</h5>
+                    <p class="card-text">完成 ${records.join('、')} 打卡</p>
+                    ${recordData[date] ? Object.entries(recordData[date]).map(([type, content]) => `
+                        <p class="mt-2"><strong>${type === 'diet' ? '饮食' : type === 'sleep' ? '运动与作息' : '情绪'}记录：</strong> ${content}</p>
+                    `).join('') : ''}
+                </div>
+            `;
+            recentRecords.appendChild(item);
+        });
+    }
+
+    // 页面加载时初始化
+    window.onload = initializeData;
+</script>
+
+<body> <!-- 页面主体开始 -->
+    <div class="container py-5"> <!-- 主容器 -->
+        <h1>自我价值构建器</h1>
+        
+        <div class="row g-4 mb-5"> <!-- 打卡卡片行 -->
+            <div class="col-md-4"> <!-- 饮食健康卡片 -->
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3>饮食健康</h3>
+                        <p class="text-muted">记录今天的饮食状况</p>
+                        <button class="btn btn-primary" onclick="checkIn('diet')">打卡</button>
+                        <p class="mt-3">已连续打卡: <span id="diet-streak">0</span> 天</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4"> <!-- 作息规律卡片 -->
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3>运动与作息</h3>
+                        <p class="text-muted">记录今天的运动和作息情况</p>
+                        <button class="btn btn-primary" onclick="checkIn('sleep')">打卡</button>
+                        <p class="mt-3">已连续打卡: <span id="sleep-streak">0</span> 天</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4"> <!-- 情绪管理卡片 -->
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h3>情绪管理</h3>
+                        <p class="text-muted">记录今天的情绪状态</p>
+                        <button class="btn btn-primary" onclick="checkIn('mood')">打卡</button>
+                        <p class="mt-3">已连续打卡: <span id="mood-streak">0</span> 天</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5"> <!-- 最近记录区域 -->
+            <h2 class="mb-4">最近打卡记录</h2>
+            <div id="recent-records"></div>
+        </div>
+
+        <div class="dedication">献给我亲爱的妈妈</div>
+    </div>
+
+    <!-- 记录弹窗 -->
+    <div class="modal fade" id="recordModal" tabindex="-1" aria-labelledby="recordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="recordModalLabel">添加记录</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="recordContent" rows="5" placeholder="记录一下今天的情况吧..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">跳过</button>
+                    <button type="button" class="btn btn-primary" onclick="saveRecord()">保存记录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入Bootstrap JavaScript库 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
