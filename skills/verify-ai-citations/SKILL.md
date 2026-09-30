@@ -78,4 +78,6 @@ Independent primary origins: X个独立原始来源 / 未找到其他独立原�
 Verdict:
 ```
 
+用户未指定文献时，可以省略逐篇书目信息的完整核对；但凡用某项找到的研究支撑关键结论，仍须逐项标明读取层级、它支持的是哪个具体主张、支持程度及主要局限。多项研究可用紧凑表格呈现，不必重复完整核验模板。
+
 Place the access label beside every scholarly link used in a research answer. Distinguish what the source states from what you infer. Do not silently replace a weak citation with a stronger one; explain the replacement.
