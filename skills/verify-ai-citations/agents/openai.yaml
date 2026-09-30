@@ -1,0 +1,14 @@
+interface:
+  display_name: AI 引用文献核验
+  short_description: 核验观点、引用与独立原始来源，说明证据读取层级
+  default_prompt: Use $verify-ai-citations to verify this claim, trace independent
+    primary sources, and state the evidence access level.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
